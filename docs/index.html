@@ -28,14 +28,12 @@
       }
       #unity-build-title { display: none; }
       #unity-loading-bar {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
+        /* This is now handled by our custom overlay */
+        display: none;
       }
 
-      /* --- "TAP TO START" OVERLAY STYLE --- */
-      #start-overlay {
+      /* --- UNIFIED STATUS OVERLAY (Handles Loading and Start) --- */
+      #status-overlay {
         position: absolute;
         top: 0;
         left: 0;
@@ -49,26 +47,26 @@
         font-family: Arial, sans-serif;
         font-size: 2em;
         z-index: 99;
-        cursor: pointer;
+        /* Not clickable by default */
+        cursor: default;
       }
 
-      /* --- NEW ORIENTATION OVERLAY STYLE --- */
+      /* --- ORIENTATION OVERLAY STYLE --- */
       #orientation-overlay {
-        position: fixed; /* Use fixed to ensure it covers the entire viewport */
+        position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
         background: #000;
         color: white;
-        /* Hidden by default, shown by JavaScript */
         display: none;
         justify-content: center;
         align-items: center;
-        flex-direction: column; /* Stack icon and text vertically */
+        flex-direction: column;
         font-family: Arial, sans-serif;
         font-size: 1.5em;
-        z-index: 100; /* Highest z-index to be on top of everything */
+        z-index: 100;
       }
       #orientation-overlay svg {
         width: 100px;
@@ -76,63 +74,48 @@
         margin-bottom: 20px;
         animation: rotate 1.5s ease-in-out infinite;
       }
-      /* Animation for the SVG icon */
       @keyframes rotate {
         0% { transform: rotate(0deg); }
         50% { transform: rotate(-90deg); }
         100% { transform: rotate(-90deg); }
       }
-
     </style>
   </head>
   <body>
-    <!-- The "Tap to Start" Overlay (from previous step) -->
-    <div id="start-overlay">
-      <div>Tap to Start</div>
+    <!-- Unified Overlay for Loading and "Tap to Start" -->
+    <div id="status-overlay">
+      <div id="status-text">Loading... 0%</div>
     </div>
 
-    <!-- NEW: The Orientation Lock Overlay -->
+    <!-- The Orientation Lock Overlay -->
     <div id="orientation-overlay">
-      <!-- SVG Icon for rotation -->
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
-        <path d="M16.49,4.26l-1.42,1.42c1.9,1.9,1.9,5.0,0,6.9s-5.0,1.9-6.9,0l-1.42,1.42c2.6,2.6,6.9,2.6,9.6,0s2.6-6.9,0-9.6zM20.49,0.26l-1.42,1.42c3.7,3.7,3.7,9.7,0,13.4s-9.7,3.7-13.4,0l-1.42,1.42c4.5,4.5,11.8,4.5,16.3,0s4.5-11.8,0-16.3zM7.51,4.26c-2.6,2.6-2.6,6.9,0,9.6s6.9,2.6,9.6,0l1.42-1.42c-3.4-3.4-8.8-3.4-12.2,0l1.19,1.19L0,15.15l1.5-7.58,1.19,1.19z"/>
-      </svg>
-      <p>Please rotate your device</p>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M16.49,4.26l-1.42,1.42c1.9,1.9,1.9,5.0,0,6.9s-5.0,1.9-6.9,0l-1.42,1.42c2.6,2.6,6.9,2.6,9.6,0s2.6-6.9,0-9.6zM20.49,0.26l-1.42,1.42c3.7,3.7,3.7,9.7,0,13.4s-9.7,3.7-13.4,0l-1.42,1.42c4.5,4.5,11.8,4.5,16.3,0s4.5-11.8,0-16.3zM7.51,4.26c-2.6,2.6-2.6,6.9,0,9.6s6.9,2.6,9.6,0l1.42-1.42c-3.4-3.4-8.8-3.4-12.2,0l1.19,1.19L0,15.15l1.5-7.58,1.19,1.19z"/></svg>
+        <p>Please rotate your device</p>
     </div>
 
     <div id="unity-container">
       <canvas id="unity-canvas" width=1920 height=1080 tabindex="-1"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-      </div>
-      <div id="unity-warning"> </div>
+      <!-- The old loading bar is no longer needed -->
+      <div id="unity-warning"></div>
     </div>
+
     <script>
       var unityContainer = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
-      var startOverlay = document.querySelector("#start-overlay");
-      // NEW: Get the orientation overlay element
+      var statusOverlay = document.querySelector("#status-overlay");
+      var statusText = document.querySelector("#status-text");
       var orientationOverlay = document.querySelector("#orientation-overlay");
 
-      // --- NEW ORIENTATION CHECK LOGIC ---
       function checkOrientation() {
-        // We check if window height is greater than its width
         if (window.innerHeight > window.innerWidth) {
-          // Portrait mode
           orientationOverlay.style.display = 'flex';
         } else {
-          // Landscape mode
           orientationOverlay.style.display = 'none';
         }
       }
-
-      // Run the check when the page loads, is resized, or orientation changes
       window.addEventListener('resize', checkOrientation);
       window.addEventListener('orientationchange', checkOrientation);
-      checkOrientation(); // Initial check on load
+      checkOrientation();
 
       function unityShowBanner(msg, type) { /* ... (your banner function) ... */ }
 
@@ -145,7 +128,7 @@
       meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
       document.getElementsByTagName('head')[0].appendChild(meta);
       
-      function resizeGameContainer() {
+      function resizeGameContainer() { /* ... (This function is unchanged) ... */
         const targetAspectRatio = 1920 / 1080;
         let width = window.innerWidth;
         let height = window.innerHeight;
@@ -161,19 +144,30 @@
       window.addEventListener('resize', resizeGameContainer);
       resizeGameContainer();
 
-      document.querySelector("#unity-loading-bar").style.display = "block";
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
-          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
+          // --- UPDATE LOADING PERCENTAGE ---
+          // Update the text on the overlay with the current loading progress
+          statusText.innerHTML = `Loading... ${Math.round(progress * 100)}%`;
+
         }).then((unityInstance) => {
-          document.querySelector("#unity-loading-bar").style.display = "none";
+          // --- GAME IS LOADED, PREPARE FOR START ---
           
-          startOverlay.addEventListener('click', () => {
+          // 1. Change text to "Tap to Start"
+          statusText.innerHTML = "Tap to Start";
+
+          // 2. Make the overlay look clickable
+          statusOverlay.style.cursor = 'pointer';
+          
+          // 3. Add the click listener
+          statusOverlay.addEventListener('click', () => {
+            // Hide the overlay
+            statusOverlay.style.display = 'none';
+            // Request fullscreen
             unityInstance.SetFullscreen(1);
-            startOverlay.style.display = 'none';
-          });
+          }, { once: true }); // { once: true } makes the listener fire only once
 
         }).catch((message) => {
           alert(message);
