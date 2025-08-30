@@ -95,7 +95,6 @@
 
     <div id="unity-container">
       <canvas id="unity-canvas" width=1920 height=1080 tabindex="-1"></canvas>
-      <!-- The old loading bar is no longer needed -->
       <div id="unity-warning"></div>
     </div>
 
@@ -117,11 +116,24 @@
       window.addEventListener('orientationchange', checkOrientation);
       checkOrientation();
 
-      function unityShowBanner(msg, type) { /* ... (your banner function) ... */ }
+      function unityShowBanner(msg, type) { /* ... (your banner function, unchanged) ... */ }
 
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/ABN_Sorting.loader.js";
-      var config = { /* ... (your config object) ... */ };
+
+      // --- THIS IS THE CRITICAL FIX ---
+      // The complete config object must be present.
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/ABN_Sorting.data",
+        frameworkUrl: buildUrl + "/ABN_Sorting.framework.js",
+        codeUrl: buildUrl + "/ABN_Sorting.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "Shorted",
+        productVersion: "1.0",
+        showBanner: unityShowBanner,
+      };
 
       var meta = document.createElement('meta');
       meta.name = 'viewport';
@@ -148,12 +160,12 @@
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
-          // --- UPDATE LOADING PERCENTAGE ---
-          // Update the text on the overlay with the current loading progress
+          // UPDATE LOADING PERCENTAGE
+          // Your excellent code for this is kept.
           statusText.innerHTML = `Loading... ${Math.round(progress * 100)}%`;
 
         }).then((unityInstance) => {
-          // --- GAME IS LOADED, PREPARE FOR START ---
+          // GAME IS LOADED, PREPARE FOR START
           
           // 1. Change text to "Tap to Start"
           statusText.innerHTML = "Tap to Start";
@@ -167,7 +179,7 @@
             statusOverlay.style.display = 'none';
             // Request fullscreen
             unityInstance.SetFullscreen(1);
-          }, { once: true }); // { once: true } makes the listener fire only once
+          }, { once: true }); // { once: true } ensures this only runs one time
 
         }).catch((message) => {
           alert(message);
