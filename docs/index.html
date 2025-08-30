@@ -34,7 +34,7 @@
         transform: translate(-50%, -50%);
       }
 
-      /* --- NEW "TAP TO START" OVERLAY STYLE --- */
+      /* --- "TAP TO START" OVERLAY STYLE --- */
       #start-overlay {
         position: absolute;
         top: 0;
@@ -51,12 +51,53 @@
         z-index: 99;
         cursor: pointer;
       }
+
+      /* --- NEW ORIENTATION OVERLAY STYLE --- */
+      #orientation-overlay {
+        position: fixed; /* Use fixed to ensure it covers the entire viewport */
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: #000;
+        color: white;
+        /* Hidden by default, shown by JavaScript */
+        display: none;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column; /* Stack icon and text vertically */
+        font-family: Arial, sans-serif;
+        font-size: 1.5em;
+        z-index: 100; /* Highest z-index to be on top of everything */
+      }
+      #orientation-overlay svg {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 20px;
+        animation: rotate 1.5s ease-in-out infinite;
+      }
+      /* Animation for the SVG icon */
+      @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        50% { transform: rotate(-90deg); }
+        100% { transform: rotate(-90deg); }
+      }
+
     </style>
   </head>
   <body>
-    <!-- The "Tap to Start" Overlay -->
+    <!-- The "Tap to Start" Overlay (from previous step) -->
     <div id="start-overlay">
       <div>Tap to Start</div>
+    </div>
+
+    <!-- NEW: The Orientation Lock Overlay -->
+    <div id="orientation-overlay">
+      <!-- SVG Icon for rotation -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
+        <path d="M16.49,4.26l-1.42,1.42c1.9,1.9,1.9,5.0,0,6.9s-5.0,1.9-6.9,0l-1.42,1.42c2.6,2.6,6.9,2.6,9.6,0s2.6-6.9,0-9.6zM20.49,0.26l-1.42,1.42c3.7,3.7,3.7,9.7,0,13.4s-9.7,3.7-13.4,0l-1.42,1.42c4.5,4.5,11.8,4.5,16.3,0s4.5-11.8,0-16.3zM7.51,4.26c-2.6,2.6-2.6,6.9,0,9.6s6.9,2.6,9.6,0l1.42-1.42c-3.4-3.4-8.8-3.4-12.2,0l1.19,1.19L0,15.15l1.5-7.58,1.19,1.19z"/>
+      </svg>
+      <p>Please rotate your device</p>
     </div>
 
     <div id="unity-container">
@@ -72,8 +113,26 @@
     <script>
       var unityContainer = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
-      // Get the new overlay element
       var startOverlay = document.querySelector("#start-overlay");
+      // NEW: Get the orientation overlay element
+      var orientationOverlay = document.querySelector("#orientation-overlay");
+
+      // --- NEW ORIENTATION CHECK LOGIC ---
+      function checkOrientation() {
+        // We check if window height is greater than its width
+        if (window.innerHeight > window.innerWidth) {
+          // Portrait mode
+          orientationOverlay.style.display = 'flex';
+        } else {
+          // Landscape mode
+          orientationOverlay.style.display = 'none';
+        }
+      }
+
+      // Run the check when the page loads, is resized, or orientation changes
+      window.addEventListener('resize', checkOrientation);
+      window.addEventListener('orientationchange', checkOrientation);
+      checkOrientation(); // Initial check on load
 
       function unityShowBanner(msg, type) { /* ... (your banner function) ... */ }
 
@@ -111,13 +170,8 @@
         }).then((unityInstance) => {
           document.querySelector("#unity-loading-bar").style.display = "none";
           
-          // --- NEW FULLSCREEN LOGIC ---
-          // This code runs after the game has loaded.
-          // Now we wait for the user to click the overlay.
           startOverlay.addEventListener('click', () => {
-            // When clicked, request fullscreen
             unityInstance.SetFullscreen(1);
-            // And hide the overlay
             startOverlay.style.display = 'none';
           });
 
