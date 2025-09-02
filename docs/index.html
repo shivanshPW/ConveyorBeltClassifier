@@ -28,7 +28,7 @@
       }
       #unity-build-title { display: none; }
       #unity-loading-bar {
-        /* This is now handled by our custom overlay */
+        /* The default loading bar is replaced by our custom overlay */
         display: none;
       }
 
@@ -47,8 +47,7 @@
         font-family: Arial, sans-serif;
         font-size: 2em;
         z-index: 99;
-        /* Not clickable by default */
-        cursor: default;
+        cursor: default; /* Not clickable until loading is finished */
       }
 
       /* --- ORIENTATION OVERLAY STYLE --- */
@@ -60,13 +59,13 @@
         height: 100vh;
         background: #000;
         color: white;
-        display: none;
+        display: none; /* Hidden by default */
         justify-content: center;
         align-items: center;
         flex-direction: column;
         font-family: Arial, sans-serif;
         font-size: 1.5em;
-        z-index: 100;
+        z-index: 100; /* Must be on top of everything */
       }
       #orientation-overlay svg {
         width: 100px;
@@ -94,7 +93,9 @@
     </div>
 
     <div id="unity-container">
+      <!-- Set the canvas base resolution to your target 1920x1080 -->
       <canvas id="unity-canvas" width=1920 height=1080 tabindex="-1"></canvas>
+      <!-- The default loading bar and footer are no longer needed -->
       <div id="unity-warning"></div>
     </div>
 
@@ -105,6 +106,7 @@
       var statusText = document.querySelector("#status-text");
       var orientationOverlay = document.querySelector("#orientation-overlay");
 
+      // --- ORIENTATION CHECK LOGIC ---
       function checkOrientation() {
         if (window.innerHeight > window.innerWidth) {
           orientationOverlay.style.display = 'flex';
@@ -114,15 +116,29 @@
       }
       window.addEventListener('resize', checkOrientation);
       window.addEventListener('orientationchange', checkOrientation);
-      checkOrientation();
+      checkOrientation(); // Initial check
 
-      function unityShowBanner(msg, type) { /* ... (your banner function, unchanged) ... */ }
+      function unityShowBanner(msg, type) {
+        var warningBanner = document.querySelector("#unity-warning");
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
 
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/ABN_Sorting.loader.js";
-
-      // --- THIS IS THE CRITICAL FIX ---
-      // The complete config object must be present.
       var config = {
         arguments: [],
         dataUrl: buildUrl + "/ABN_Sorting.data",
@@ -135,12 +151,13 @@
         showBanner: unityShowBanner,
       };
 
+      // --- VIEWPORT & ASPECT RATIO LOGIC ---
       var meta = document.createElement('meta');
       meta.name = 'viewport';
       meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
       document.getElementsByTagName('head')[0].appendChild(meta);
       
-      function resizeGameContainer() { /* ... (This function is unchanged) ... */
+      function resizeGameContainer() {
         const targetAspectRatio = 1920 / 1080;
         let width = window.innerWidth;
         let height = window.innerHeight;
@@ -154,18 +171,18 @@
         unityContainer.style.height = height + 'px';
       }
       window.addEventListener('resize', resizeGameContainer);
-      resizeGameContainer();
+      resizeGameContainer(); // Initial resize
 
+      // --- UNITY INSTANCE CREATION & LOADING LOGIC ---
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
-          // UPDATE LOADING PERCENTAGE
-          // Your excellent code for this is kept.
+          // Update the text on the overlay with the current loading progress
           statusText.innerHTML = `Loading... ${Math.round(progress * 100)}%`;
 
         }).then((unityInstance) => {
-          // GAME IS LOADED, PREPARE FOR START
+          // --- GAME IS LOADED, PREPARE FOR START ---
           
           // 1. Change text to "Tap to Start"
           statusText.innerHTML = "Tap to Start";
@@ -173,13 +190,13 @@
           // 2. Make the overlay look clickable
           statusOverlay.style.cursor = 'pointer';
           
-          // 3. Add the click listener
+          // 3. Add the click listener that will start the game in fullscreen
           statusOverlay.addEventListener('click', () => {
             // Hide the overlay
             statusOverlay.style.display = 'none';
             // Request fullscreen
             unityInstance.SetFullscreen(1);
-          }, { once: true }); // { once: true } ensures this only runs one time
+          }, { once: true }); // '{ once: true }' is important, it makes the listener fire only once
 
         }).catch((message) => {
           alert(message);

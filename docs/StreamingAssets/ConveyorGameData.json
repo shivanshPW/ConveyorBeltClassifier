@@ -192,11 +192,11 @@
       "reactor": 0,
 
       "containers": [
-        { "name": "WEAK_ACID", "label_color": "#FFB347", "icon": "weak_acid_beaker.png" },
-        { "name": "STRONG_ACID", "label_color": "#FF4500", "icon": "strong_acid_beaker.png" },
-        { "name": "WEAK_BASE", "label_color": "#87CEEB", "icon": "weak_base_beaker.png" },
-        { "name": "STRONG_BASE", "label_color": "#0066CC", "icon": "strong_base_beaker.png" },
-        { "name": "NEUTRAL", "label_color": "#4CD964", "icon": "neutral_beaker.png" }
+        { "name": "WEAK_ACID", "icon": "weak_acid_beaker.png" },
+        { "name": "STRONG_ACID","icon": "strong_acid_beaker.png" },
+        { "name": "WEAK_BASE","icon": "weak_base_beaker.png" },
+        { "name": "STRONG_BASE","icon": "strong_base_beaker.png" },
+        { "name": "NEUTRAL","icon": "neutral_beaker.png" }
       ],
 
       "items": [
