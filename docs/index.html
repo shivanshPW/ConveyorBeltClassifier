@@ -26,10 +26,9 @@
         height: 100%;
         background: #000;
       }
-      #unity-build-title { display: none; }
-      #unity-loading-bar {
-        /* The default loading bar is replaced by our custom overlay */
-        display: none;
+      /* Hide the old default Unity UI elements */
+      #unity-build-title, #unity-loading-bar, #unity-footer { 
+        display: none; 
       }
 
       /* --- UNIFIED STATUS OVERLAY (Handles Loading and Start) --- */
@@ -47,7 +46,7 @@
         font-family: Arial, sans-serif;
         font-size: 2em;
         z-index: 99;
-        cursor: default; /* Not clickable until loading is finished */
+        cursor: default;
       }
 
       /* --- ORIENTATION OVERLAY STYLE --- */
@@ -59,13 +58,13 @@
         height: 100vh;
         background: #000;
         color: white;
-        display: none; /* Hidden by default */
+        display: none;
         justify-content: center;
         align-items: center;
         flex-direction: column;
         font-family: Arial, sans-serif;
         font-size: 1.5em;
-        z-index: 100; /* Must be on top of everything */
+        z-index: 100;
       }
       #orientation-overlay svg {
         width: 100px;
@@ -93,20 +92,20 @@
     </div>
 
     <div id="unity-container">
-      <!-- Set the canvas base resolution to your target 1920x1080 -->
+      <!-- Set canvas base resolution to your target 1920x1080 -->
       <canvas id="unity-canvas" width=1920 height=1080 tabindex="-1"></canvas>
-      <!-- The default loading bar and footer are no longer needed -->
       <div id="unity-warning"></div>
     </div>
 
     <script>
+      // --- ELEMENT REFERENCES ---
       var unityContainer = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
       var statusOverlay = document.querySelector("#status-overlay");
       var statusText = document.querySelector("#status-text");
       var orientationOverlay = document.querySelector("#orientation-overlay");
 
-      // --- ORIENTATION CHECK LOGIC ---
+      // --- ORIENTATION LOCK LOGIC ---
       function checkOrientation() {
         if (window.innerHeight > window.innerWidth) {
           orientationOverlay.style.display = 'flex';
@@ -118,7 +117,25 @@
       window.addEventListener('orientationchange', checkOrientation);
       checkOrientation(); // Initial check
 
-      function unityShowBanner(msg, type) {
+      // --- ASPECT RATIO LOGIC ---
+      function resizeGameContainer() {
+        const targetAspectRatio = 1920 / 1080;
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        let windowAspectRatio = width / height;
+        if (windowAspectRatio > targetAspectRatio) {
+          width = height * targetAspectRatio;
+        } else {
+          height = width / targetAspectRatio;
+        }
+        unityContainer.style.width = width + 'px';
+        unityContainer.style.height = height + 'px';
+      }
+      window.addEventListener('resize', resizeGameContainer);
+      resizeGameContainer(); // Initial resize
+
+      // --- UNITY SETUP & LOADING ---
+      function unityShowBanner(msg, type) { /* ... (This function is unchanged from the original template) ... */
         var warningBanner = document.querySelector("#unity-warning");
         function updateBannerVisibility() {
           warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
@@ -151,52 +168,30 @@
         showBanner: unityShowBanner,
       };
 
-      // --- VIEWPORT & ASPECT RATIO LOGIC ---
+      // Add the viewport meta tag for a better experience on mobile devices
       var meta = document.createElement('meta');
       meta.name = 'viewport';
       meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
       document.getElementsByTagName('head')[0].appendChild(meta);
-      
-      function resizeGameContainer() {
-        const targetAspectRatio = 1920 / 1080;
-        let width = window.innerWidth;
-        let height = window.innerHeight;
-        let windowAspectRatio = width / height;
-        if (windowAspectRatio > targetAspectRatio) {
-          width = height * targetAspectRatio;
-        } else {
-          height = width / targetAspectRatio;
-        }
-        unityContainer.style.width = width + 'px';
-        unityContainer.style.height = height + 'px';
-      }
-      window.addEventListener('resize', resizeGameContainer);
-      resizeGameContainer(); // Initial resize
 
-      // --- UNITY INSTANCE CREATION & LOADING LOGIC ---
+      // --- SCRIPT LOADER AND UNITY INSTANCE CREATION ---
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
-          // Update the text on the overlay with the current loading progress
+          // UPDATE LOADING PERCENTAGE
           statusText.innerHTML = `Loading... ${Math.round(progress * 100)}%`;
 
         }).then((unityInstance) => {
-          // --- GAME IS LOADED, PREPARE FOR START ---
-          
-          // 1. Change text to "Tap to Start"
+          // GAME IS LOADED, PREPARE FOR START
           statusText.innerHTML = "Tap to Start";
-
-          // 2. Make the overlay look clickable
           statusOverlay.style.cursor = 'pointer';
           
-          // 3. Add the click listener that will start the game in fullscreen
+          // Add the click listener to start the game and enter fullscreen
           statusOverlay.addEventListener('click', () => {
-            // Hide the overlay
             statusOverlay.style.display = 'none';
-            // Request fullscreen
             unityInstance.SetFullscreen(1);
-          }, { once: true }); // '{ once: true }' is important, it makes the listener fire only once
+          }, { once: true }); // 'once: true' ensures this runs only one time
 
         }).catch((message) => {
           alert(message);
