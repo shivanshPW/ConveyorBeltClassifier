@@ -8,7 +8,7 @@
     {
       "level": 1,
       "objective_text": "Sort substances into Acid, Base, or Neutral beakers!",
-      "conveyor_speed_modifier": 0.5,
+      "conveyor_speed_modifier": 0.6,
       "total_items_in_level": 10,
       "item_spawn_interval_seconds": 6,
       "xp_per_correct": 5,
@@ -18,69 +18,70 @@
       "reactor": 0,
 
       "containers": [
-        { "name": "HARMFUL", "id": "Synthethic" },
-        { "name": "FRIENDLY", "id": "Natural" }
+        { "name": "NEUTRAL", "id": "neutral_beaker" },
+        { "name": "BASE", "id": "base_beaker" },
+        { "name": "ACID", "id": "acid_beaker" }
       ],
 
       "items": [
         {
-          "id": "flu",
-          "display_text": "",
-          "correct_category_name": "HARMFUL",
+          "id": "lemon_juice_1",
+          "display_text": "Lemon Juice",
+          "correct_category_name": "ACID",
           "presentation_mode": "NAME"
         },
         {
-          "id": "malaria",
-          "display_text": "",
-          "correct_category_name": "HARMFUL",
+          "id": "soap_solution_1",
+          "display_text": "Soap Solution",
+          "correct_category_name": "BASE",
           "presentation_mode": "NAME"
         },
         {
-          "id": "sacc",
-          "display_text": "Silk",
-          "correct_category_name": "FRIENDLY",
+          "id": "pure_water_1",
+          "display_text": "Pure Water",
+          "correct_category_name": "NEUTRAL",
           "presentation_mode": "NAME"
         },
         {
-          "id": "yeast",
-          "display_text": "rayon",
-          "correct_category_name": "FRIENDLY",
+          "id": "vinegar_1",
+          "display_text": "Vinegar",
+          "correct_category_name": "ACID",
           "presentation_mode": "NAME"
         },
         {
-          "id": "typhoid",
-          "display_text": "",
-          "correct_category_name": "HARMFUL",
+          "id": "baking_soda_1",
+          "display_text": "Baking Soda Solution",
+          "correct_category_name": "BASE",
           "presentation_mode": "NAME"
         },
         {
-          "id": "lactobacillus",
-          "display_text": "jute",
-          "correct_category_name": "FRIENDLY",
+          "id": "SaltSolution",
+          "display_text": "Milk",
+          "correct_category_name": "NEUTRAL",
           "presentation_mode": "NAME"
         },
         {
-          "id": "chlorea",
-          "display_text": "",
-          "correct_category_name": "HARMFUL",
+          "id": "Curd",
+          "display_text": "Dilute HCl",
+          "correct_category_name": "ACID",
           "presentation_mode": "NAME"
         },
         {
-          "id": "penincillium",
-          "display_text": "nylon",
-          "correct_category_name": "FRIENDLY",
+          "id": "Soda",
+          "display_text": "Bleach",
+          "correct_category_name": "ACID",
           "presentation_mode": "NAME"
         },
         {
-          "id": "rhizombium",
-          "display_text": "polyester",
-          "correct_category_name": "FRIENDLY",
+          "id": "Sugar_Solution",
+          "display_text": "Salt Solution",
+          "correct_category_name": "NEUTRAL",
           "presentation_mode": "NAME"
         },
         {
-          "id": "tb",
-          "display_text": "spandex",
-          "correct_category_name": "HARMFUL",
+          "id": "Window_Cleaner",
+          "display_text": "Window_Cleaner",
+          "correct_category_name": "BASE",
           "presentation_mode": "NAME"
         }
       ]
@@ -99,77 +100,79 @@
       "reactor": 1,
 
       "containers": [
-        { "name": "HARMFUL", "id": "Synthethic" },
-        { "name": "FRIENDLY", "id": "Natural" }
+        { "name": "NEUTRAL", "id": "neutral_beaker" },
+        { "name": "BASE", "id": "base_beaker" },
+        { "name": "ACID", "id": "acid_beaker" }
       ],
+
       "items": [
         {
-          "id": "commonCold",
-          "display_text": "Common Cold",
-          "correct_category_name": "HARMFUL",
+          "id": "Apple_Juice",
+          "display_text": "pH: ~3.0",
+          "correct_category_name": "ACID",
           "presentation_mode": "PROPERTY_CUE",
-          "reaction_type": "NO_REACTION"
+          "reaction_type": "LITMUS_RED"
         },
         {
-          "id": "terleSewagetreene",
-          "display_text": "Cleans Water",
-          "correct_category_name": "FRIENDLY",
+          "id": "Bleach",
+          "display_text": "pH: ~12.0",
+          "correct_category_name": "BASE",
           "presentation_mode": "PROPERTY_CUE",
-          "reaction_type": "NO_REACTION"
+          "reaction_type": "LITMUS_BLUE"
         },
         {
-          "id": "curd",
-          "display_text": "Fermentation",
-          "correct_category_name": "FRIENDLY",
+          "id": "Distilled_Water",
+          "display_text": "pH: 7.0",
+          "correct_category_name": "NEUTRAL",
           "presentation_mode": "PROPERTY_CUE",
           "hint_text": "No litmus change?"
         },
         {
-          "id": "foodbackteria",
-          "display_text": "Spoils Food",
-          "correct_category_name": "HARMFUL",
+          "id": "Ammonia",
+          "display_text": "pH: ~11.0",
+          "correct_category_name": "BASE",
           "presentation_mode": "PROPERTY_CUE",
           "reaction_type": "PH_INDICATOR_RED"
         },
         {
-          "id": "vaccine",
-          "display_text": "Disease Prevention",
-          "correct_category_name": "FRIENDLY",
+          "id": "Antacid",
+          "display_text": "pH: ~9.0",
+          "correct_category_name": "BASE",
           "presentation_mode": "PROPERTY_CUE",
           "reaction_type": "PH_INDICATOR_BLUE"
         },
         {
-          "id": "fungi",
-          "display_text": "Breaks Down Waste",
-          "correct_category_name": "FRIENDLY",
+          "id": "Milk_of_magnesia",
+          "display_text": "pH: ~10.5",
+          "correct_category_name": "BASE",
           "presentation_mode": "PROPERTY_CUE",
           "reaction_type": "PH_INDICATOR_GREEN"
         },
         {
-          "id": "meable",
-          "display_text": "Highly Contagious",
-          "correct_category_name": "HARMFUL",
+          "id": "chemical_x",
+          "display_text": "Ph > 7",
+          "correct_category_name": "BASE",
           "presentation_mode": "PROPERTY_CUE",
           "hint_text": "Sour taste indicator?"
         },
         {
-          "id": "ecoli",
-          "display_text": "Aids Digestion",
-          "correct_category_name": "FRIENDLY",
+          "id": "orange_Juice",
+          "display_text": "pH: ~3.5",
+          "correct_category_name": "ACID",
           "presentation_mode": "PROPERTY_CUE",
           "hint_text": "Bitter taste indicator?"
         },
         {
-          "id": "foot",
-          "display_text": "Foot Infection",
-          "correct_category_name": "HARMFUL",
+          "id": "Shampoo",
+          "display_text": "pH: ~7.0",
+          "correct_category_name": "NEUTRAL",
           "presentation_mode": "PROPERTY_CUE",
           "reaction_type": "NO_REACTION"
         },
         {
-          "id": "ringworm",
-          "display_text": "Skin Infection",
-          "correct_category_name": "HARMFUL",
+          "id": "Tarmarid_Solution",
+          "display_text": "pH: ~3.0",
+          "correct_category_name": "ACID",
           "presentation_mode": "PROPERTY_CUE",
           "reaction_type": "METAL_BUBBLES"
         }
@@ -189,70 +192,72 @@
       "reactor": 0,
 
       "containers": [
-        { "name": "USED-IN-FOOD", "icon": "weak_acid_beaker.png" },
-        { "name": "CAUSES-DISEASE","icon": "strong_acid_beaker.png" },
-        { "name": "USED-IN-MEDICINE","icon": "weak_base_beaker.png" }
-        ],
+        { "name": "WEAK__ACID", "icon": "weak_acid_beaker.png" },
+        { "name": "STRONG_ACID","icon": "strong_acid_beaker.png" },
+        { "name": "WEAK_BASE","icon": "weak_base_beaker.png" },
+        { "name": "STRONG_BASE","icon": "strong_base_beaker.png" },
+        { "name": "NEUTRAL","icon": "neutral_beaker.png" }
+      ],
 
       "items": [
         {
-          "id": "cough",
+          "id": "amonium_hydroxide",
           "display_text": "",
-          "correct_category_name": "CAUSES-DISEAS",
+          "correct_category_name": "WEAK_BASE",
           "presentation_mode": "IMAGE_ONLY"
         },
         {
-          "id": "dengu",
+          "id": "ascorbic_acid",
           "display_text": "",
-          "correct_category_name": "CAUSES-DISEASE",
+          "correct_category_name": "WEAK_ACID",
           "presentation_mode": "IMAGE_ONLY"
         },
         {
-          "id": "fermentation",
+          "id": "baking_powder",
           "display_text": "",
-          "correct_category_name": "USED-IN-FOOD",
+          "correct_category_name": "WEAK_BASE",
           "presentation_mode": "IMAGE_ONLY"
         },
         {
-          "id": "fermenter",
+          "id": "cement",
           "display_text": "",
-          "correct_category_name": "USED-IN-MEDICINE",
+          "correct_category_name": "STRONG_BASE",
           "presentation_mode": "IMAGE_ONLY"
         },
         {
-          "id": "h-i",
-          "display_text": "NA",
-          "correct_category_name": "CAUSES-DISEASE",
+          "id": "coconut_water",
+          "display_text": "",
+          "correct_category_name": "NEUTRAL",
           "presentation_mode": "IMAGE_ONLY"
         },
         {
-          "id": "perdish",
+          "id": "stomach_acid",
           "display_text": "",
-          "correct_category_name": "USED-IN-MEDICINE",
+          "correct_category_name": "STRONG_ACID",
           "presentation_mode": "IMAGE_ONLY"
         },
         {
-          "id": "vaccine",
+          "id": "mango_juice",
           "display_text": "",
-          "correct_category_name": "USED-IN-MEDICINE",
+          "correct_category_name": "WEAK_ACID",
           "presentation_mode": "IMAGE_ONLY"
         },
         {
-          "id": "rootnodule",
+          "id": "sea_water",
           "display_text": "",
-          "correct_category_name": "CAUSES-DISEASE",
+          "correct_category_name": "WEAK_BASE",
           "presentation_mode": "IMAGE_ONLY"
         },
         {
-          "id": "contamination",
+          "id": "sodium_Hydroxide",
           "display_text": "",
-          "correct_category_name": "CAUSES-DISEASE",
+          "correct_category_name": "STRONG_BASE",
           "presentation_mode": "IMAGE_ONLY"
         },
         {
-          "id": "toothDecay",
+          "id": "sulfuric_Acid",
           "display_text": "",
-          "correct_category_name": "CAUSES-DISEASE",
+          "correct_category_name": "STRONG_ACID",
           "presentation_mode": "IMAGE_ONLY"
         }
       ]
