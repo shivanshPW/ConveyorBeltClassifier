@@ -249,7 +249,9 @@
           setTimeout(applyLetterboxing, 100);
       });
 
-      applyLetterboxing(); 
+      window.onload = function() {
+          applyLetterboxing(); 
+      }; 
       document.body.appendChild(script);
     </script>
   </body>
