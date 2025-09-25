@@ -109,13 +109,13 @@
           font-family: Arial, sans-serif; font-size: 2em; z-index: 99;
       }
 
-      /* Style for the new start button */
       #start-button {
           font-size: 1.2em;
           padding: 20px 40px;
           border-radius: 50px;
           font-family: 'Bebas Neue', cursive;
           letter-spacing: 2px;
+          margin-top: 20px;
       }
     </style>
   </head>
@@ -142,22 +142,23 @@
       </div>
     </div>
 
-    <!-- Modified loading overlay -->
+    <!-- Corrected loading overlay with a start button -->
     <div id="loading-overlay">
       <div id="loading-text">Loading... 0%</div>
-      <!-- Start button, hidden by default -->
       <button id="start-button" style="display: none;">Click to Start</button>
     </div>
     
-        <script>
-      // --- ELEMENT SELECTORS (unchanged) ---
+    <!-- Corrected and final script -->
+    <script>
+      // --- ELEMENT SELECTORS ---
       var pageContainer = document.querySelector("#page-container");
       var unityContainer = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
       var loadingOverlay = document.querySelector("#loading-overlay");
       var loadingText = document.querySelector("#loading-text");
+      var startButton = document.querySelector("#start-button");
 
-      // --- FUNCTIONS (unchanged) ---
+      // --- FUNCTIONS ---
       function toggleFullscreen() {
           if (!document.fullscreenElement) {
               pageContainer.requestFullscreen().catch(err => {
@@ -173,7 +174,7 @@
       }
 
       function applyLetterboxing() {
-          console.log("Applying letterboxing..."); // For debugging
+          console.log("Applying letterboxing...");
           const targetAspectRatio = 1920 / 1080;
           let containerWidth = unityContainer.offsetWidth;
           let containerHeight = unityContainer.offsetHeight;
@@ -195,10 +196,9 @@
 
       function unityShowBanner(msg, type) { /* ... unchanged ... */ }
 
-      // --- EVENT LISTENERS (unchanged) ---
+      // --- EVENT LISTENERS ---
       window.addEventListener('resize', applyLetterboxing);
       window.addEventListener('orientationchange', applyLetterboxing);
-      
       document.addEventListener('fullscreenchange', () => {
           const fullscreenButton = document.getElementById('fullscreen-button');
           if (document.fullscreenElement) {
@@ -209,7 +209,7 @@
           setTimeout(applyLetterboxing, 100);
       });
 
-      // --- UNITY CONFIG (unchanged) ---
+      // --- UNITY CONFIG ---
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/ABN_Sorting.loader.js";
       var config = {
@@ -226,32 +226,29 @@
       meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
       document.getElementsByTagName('head')[0].appendChild(meta);
 
-      // --- SCRIPT LOADING AND INITIALIZATION (THE FIX IS HERE) ---
+      // --- SCRIPT LOADING AND INITIALIZATION ---
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
           loadingText.innerHTML = `Loading... ${Math.round(progress * 100)}%`;
         }).then((unityInstance) => {
-          // --- START: THE FIX ---
-          // The game is loaded, but before we hide the overlay,
-          // we run the letterboxing one last time.
-          
-          // We use a small timeout to push this execution to the very end of the
-          // browser's rendering queue, ensuring fonts and layouts are 100% final.
-          setTimeout(() => {
-            applyLetterboxing();
-            // Now, hide the loading screen.
-            loadingOverlay.style.display = 'none';
-          }, 100); // 100ms is a safe, unnoticeable delay.
-          // --- END: THE FIX ---
-
+          // Game is loaded. Hide the loading text and show the start button.
+          loadingText.style.display = 'none';
+          startButton.style.display = 'block';
         }).catch((message) => {
           alert(message);
         });
       };
       
-      // We still run this on page load as a first guess, but the one above is the one that really counts.
+      // Add click listener to the start button. This is the main fix.
+      startButton.addEventListener('click', () => {
+        // Now that the user has interacted, we can safely size and show the game.
+        applyLetterboxing();
+        loadingOverlay.style.display = 'none';
+      });
+      
+      // Run an initial calculation on page load for a better background appearance.
       window.addEventListener('load', applyLetterboxing);
       
       document.body.appendChild(script);
